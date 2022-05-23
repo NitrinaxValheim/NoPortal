@@ -28,7 +28,7 @@
 
         public const string Company = "Nitrinax";
 
-        public const string Copyright = "MIT License © 2022";
+        public const string Copyright = "GNU GPL V3";
 
         public const string Trademark = "";
 
