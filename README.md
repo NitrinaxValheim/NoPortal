@@ -101,6 +101,24 @@ If you found more mods that are incompatible, feel free to report them as issue 
 
 # Changelog
 
+* Version 0.0.1.5
+    * added config for
+        - force noportals global key (toggle)
+
+* Version 0.0.1.4
+    * added config for
+        - plugin enabled (toggle)
+        - show changes at startup (toggle)
+        - browse all piece tables (toggle)
+        - allow portals (dropdown) (None, Vanilla, Custom, All)
+        - set noportals global key (toggle) (if 'allow portals' set to 'None')
+
+* Version 0.0.1.3
+    * updated code to new template based format
+
+* Version 0.0.1.2
+    * updated to use Jotunn 2.6.7
+
 * Version 0.0.1.1
     * unused code parts removed
     * checked against a bunch of portal and teleport mods

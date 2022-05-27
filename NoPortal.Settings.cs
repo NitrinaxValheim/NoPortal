@@ -12,7 +12,7 @@
 
         public const string ModName = "NoPortal";
 
-        public const string Version = "0.0.1.1";
+        public const string Version = "0.0.1.5";
 
         public const string Description = "Remove portal from _HammerPieceTable. Admins can still spawn it. Set noportals global key.";
 
