@@ -1,7 +1,6 @@
 ﻿// System
 using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 
 // UnityEngine
@@ -14,10 +13,9 @@ using BepInEx.Configuration;
 // Jotunn
 using Jotunn.Managers;
 using Jotunn.Utils;
-
 using Logger = Jotunn.Logger;
 
-////  functions
+// Settings
 using NoPortal.Settings;
 
 namespace NoPortal
@@ -70,16 +68,20 @@ namespace NoPortal
         private const string nameOfShowChangesAtStartupConfigEntry = "ShowChangesAtStartup";
         private const string nameOfBrowseAllPieceTablesConfigEntry = "BrowseAllPieceTables";
         private const string nameOfAllowPortalsConfigEntry = "AllowPortals";
+        /* temporary disabled
         private const string nameOfSetNoportalsGlobalKeyConfigEntry = "SetGlobalKey";
         private const string nameOfForceNoportalsGlobalKeyConfigEntry = "ForceGlobalKey";
+        */
 
         // default values
         private const bool defaultPluginEnabled = true;
         private const int defaultNexusID = 1888;
         private const bool defaultShowChangesAtStartup = false;
         private const bool defaultBrowseAllPieceTables = true;
+        /* temporary disabled
         private const bool defaultSetNoportalsGlobalKey = true;
         private const bool defaultForceNoportalsGlobalKey = false;
+        */
 
         // config values
         private ConfigEntry<bool> configModEnabled;
@@ -98,8 +100,10 @@ namespace NoPortal
         };
 
         private ConfigEntry<AllowPortalOptions> configAllowPortals;
+        /* temporary disabled
         private ConfigEntry<bool> configSetNoportalsGlobalKey;
         private ConfigEntry<bool> configForceNoportalsGlobalKey;
+        */
 
         #region[Awake]
         private void Awake()
@@ -217,6 +221,7 @@ namespace NoPortal
                 )
             );
 
+            /* temporary disabled
             configSetNoportalsGlobalKey = Config.Bind(
                 nameOfPluginCategory,
                 nameOfSetNoportalsGlobalKeyConfigEntry,
@@ -244,6 +249,7 @@ namespace NoPortal
                     }
                 )
             );
+            */
 
             // You can subscribe to a global event when config got synced initially and on changes
             SynchronizationManager.OnConfigurationSynchronized += (obj, attr) =>
@@ -326,6 +332,7 @@ namespace NoPortal
 
             }
 
+            /* temporary disabled
             // get forceNoPortalsGlobalKey
             bool forceNoPortalsGlobalKey = (bool)Config[nameOfPluginCategory, nameOfForceNoportalsGlobalKeyConfigEntry].BoxedValue;
             if (showDebugInfo == true) { Logger.LogInfo("forceNoPortalsGlobalKey " + forceNoPortalsGlobalKey); }
@@ -366,6 +373,7 @@ namespace NoPortal
                 }
 
             }
+            */
 
         }
         #endregion
@@ -678,6 +686,7 @@ namespace NoPortal
 
                 ReadConfigValues();
 
+                /* temporary disabled
                 debugGlobalKeys();
 
                 // debug 'noportals' global key
@@ -693,6 +702,7 @@ namespace NoPortal
                     Logger.LogInfo("noportals not set");
 
                 }
+                */
 
             }
             catch (Exception ex)
