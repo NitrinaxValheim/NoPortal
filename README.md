@@ -1,12 +1,11 @@
 # NoPortal
 
 - The mod automatically removes all known portal pieces from all registered PieceTables.
-(Admins can still spawn it.)
-- The mod automatically sets the global key noportals.
+(Admins can still spawn them.)
 
 # Usage
 
-No manual interaction is required.
+Options can changed in the config menu.
 
 # Installation
 
@@ -20,7 +19,10 @@ This mod needs to be installed on each client, not the server.
 
 # Configuration
 
-No configuration added currently.
+- plugin enabled (toggle)
+- show changes at startup (toggle)
+- browse all piece tables (toggle)
+- allow portals (dropdown) (None, Vanilla, Custom, All)
 
 # Unaffected Mods
 
