@@ -214,7 +214,8 @@ namespace NoPortal
                 new ConfigDescription(
                     "Allow 'None', only 'Vanilla', only 'Custom' or 'All' portals.",
                     null,
-                    new ConfigurationManagerAttributes {
+                    new ConfigurationManagerAttributes
+                    {
                         DefaultValue = AllowPortalOptions.None,
                         Order = 2
                     }
@@ -439,15 +440,15 @@ namespace NoPortal
                     AddVanillaPortalPieceToHammerPieceTable();
 
                     // allow all portal pieces, do nothing
-                    if(showChangesAtStartup == true) { Logger.LogWarning("AllowPortals is set to 'All'. No changes are made for " + pieceTable.name + "."); }
+                    if (showChangesAtStartup == true) { Logger.LogWarning("AllowPortals is set to 'All'. No changes are made for " + pieceTable.name + "."); }
 
-                break;
+                    break;
 
                 default:
 
                     Logger.LogWarning("unknown option found " + allowPortals.GetType().ToString());
 
-                break;
+                    break;
 
             }
 
@@ -510,7 +511,8 @@ namespace NoPortal
         #endregion
 
         #region[RemoveCustomPortalPiecesFromPieceTables]
-        private void RemoveCustomPortalPiecesFromPieceTables(PieceTable pieceTable) {
+        private void RemoveCustomPortalPiecesFromPieceTables(PieceTable pieceTable)
+        {
 
             if (showSubInfo == true) { Logger.LogInfo("RemoveCustomPortalPiecesFromPieceTables"); }
 
@@ -563,7 +565,8 @@ namespace NoPortal
             int pieceIndex = pieceTable.m_pieces.IndexOf(piecePrefab);
             if (showDebugInfo == true) { Logger.LogInfo("prefabIndex " + pieceIndex); }
 
-            if (pieceIndex > -1) {
+            if (pieceIndex > -1)
+            {
 
                 // remove piece at index of piece table
                 // pieceTable.m_pieces.RemoveAt(pieceIndex);
@@ -625,7 +628,7 @@ namespace NoPortal
             {
 
                 if (showChangesAtStartup == true) { Logger.LogWarning("Global key 'noportals' removed."); }
-            
+
             }
             else
             {
@@ -778,12 +781,13 @@ namespace NoPortal
             {
 
                 // check for other portal mod, if found return true
-                if (LookForModInPluginDir(incompatibleMod + ".dll") == true) {
+                if (LookForModInPluginDir(incompatibleMod + ".dll") == true)
+                {
 
                     Logger.LogWarning("Incompatible mod found : " + incompatibleMod + ". Please remove it or you cant use NoPortal.");
 
                     return true;
-                
+
                 }
 
             }
