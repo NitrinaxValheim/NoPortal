@@ -16,13 +16,13 @@ using Jotunn.Utils;
 using Logger = Jotunn.Logger;
 
 // Settings
-using NoPortal.Settings;
+using PluginSettings;
 
 namespace NoPortal
 {
 
     // setup plugin data
-    [BepInPlugin(ModData.Guid, ModData.ModName, ModData.Version)]
+    [BepInPlugin(PluginData.Guid, PluginData.ModName, PluginData.Version)]
 
     // check for running valheim process
     [BepInProcess("valheim.exe")]
@@ -57,38 +57,6 @@ namespace NoPortal
         private const Boolean showDebugInfo = false;
 
         // config values
-
-        // general category
-        private const string nameOfGeneralCategory = "General";
-        private const string nameOfPluginEnabledConfigEntry = "Enabled";
-        private const string nameOfNexusIDConfigEntry = "NexusID";
-
-        // plugin category
-        private const string nameOfPluginCategory = "Plugin";
-        private const string nameOfShowChangesAtStartupConfigEntry = "ShowChangesAtStartup";
-        private const string nameOfBrowseAllPieceTablesConfigEntry = "BrowseAllPieceTables";
-        private const string nameOfAllowPortalsConfigEntry = "AllowPortals";
-        /* temporary disabled
-        private const string nameOfSetNoportalsGlobalKeyConfigEntry = "SetGlobalKey";
-        private const string nameOfForceNoportalsGlobalKeyConfigEntry = "ForceGlobalKey";
-        */
-
-        // default values
-        private const bool defaultPluginEnabled = true;
-        private const int defaultNexusID = 1888;
-        private const bool defaultShowChangesAtStartup = false;
-        private const bool defaultBrowseAllPieceTables = true;
-        /* temporary disabled
-        private const bool defaultSetNoportalsGlobalKey = true;
-        private const bool defaultForceNoportalsGlobalKey = false;
-        */
-
-        // config values
-        private ConfigEntry<bool> configModEnabled;
-        private ConfigEntry<int> configNexusID;
-        private ConfigEntry<bool> configShowChangesAtStartup;
-        private ConfigEntry<bool> configBrowseAllPieceTables;
-
         // enum for AllowPortals
         [Flags]
         private enum AllowPortalOptions
@@ -99,7 +67,34 @@ namespace NoPortal
             All = 4
         };
 
+        //portal category
+        private const string ConfigCategoryPortal = "Portal";
+
+        private const string ConfigEntryBrowseAllPieceTables = "BrowseAllPieceTables";
+        private const bool ConfigEntryBrowseAllPieceTablesDefaultState = true;
+        private const string ConfigEntryBrowseAllPieceTablesDescription = "Browse all known piece tables for portal pieces.";
+
+        private const string ConfigEntryAllowPortals = "AllowPortals";
+        private const AllowPortalOptions ConfigEntryAllowPortalsDefaultState = AllowPortalOptions.None;
+        private const string ConfigEntryAllowPortalsDescription = "Allow 'None', only 'Vanilla', only 'Custom' or 'All' portals.";
+
+        /* temporary disabled
+        private const string ConfigEntrySetNoportalsGlobalKey = "SetGlobalKey";
+        private const bool ConfigEntrySetNoportalsGlobalKeyDefaultState = true;
+        private const string ConfigEntrySetNoportalsGlobalKeyDescription = "If AllowPortals is set to 'None', the global key 'noportals' is set.";
+
+        private const string ConfigEntryForceNoportalsGlobalKey = "ForceGlobalKey";
+        private const bool ConfigEntryForceNoportalsGlobalKeyDefaultState = false;
+        private const string ConfigEntryForceNoportalsGlobalKeyDescription = "Force the global key 'noportals' every time.";
+        */
+
+        // config values
+        private ConfigEntry<bool> configModEnabled;
+        private ConfigEntry<int> configNexusID;
+        private ConfigEntry<bool> configShowChangesAtStartup;
+        private ConfigEntry<bool> configBrowseAllPieceTables;
         private ConfigEntry<AllowPortalOptions> configAllowPortals;
+
         /* temporary disabled
         private ConfigEntry<bool> configSetNoportalsGlobalKey;
         private ConfigEntry<bool> configForceNoportalsGlobalKey;
@@ -153,10 +148,10 @@ namespace NoPortal
 
             // Add client config which can be edited in every local instance independently
             configModEnabled = Config.Bind(
-                nameOfGeneralCategory,
-                nameOfPluginEnabledConfigEntry,
-                defaultPluginEnabled,
-                new ConfigDescription("Enable this mod",
+                PluginData.ConfigCategoryGeneral,
+                PluginData.ConfigEntryEnabled,
+                PluginData.ConfigEntryEnabledDefaultState,
+                new ConfigDescription(PluginData.ConfigEntryEnabledDescription,
                     null,
                     new ConfigurationManagerAttributes
                     {
@@ -165,10 +160,10 @@ namespace NoPortal
             );
 
             configNexusID = Config.Bind(
-                nameOfGeneralCategory,
-                nameOfNexusIDConfigEntry,
-                defaultNexusID,
-                new ConfigDescription("Nexus mod ID for updates",
+                PluginData.ConfigCategoryGeneral,
+                PluginData.ConfigEntryNexusID,
+                PluginData.ConfigEntryNexusIDID,
+                new ConfigDescription(PluginData.ConfigEntryNexusIDDescription,
                     null,
                     new ConfigurationManagerAttributes
                     {
@@ -180,73 +175,75 @@ namespace NoPortal
             );
 
             configShowChangesAtStartup = Config.Bind(
-                nameOfPluginCategory,
-                nameOfShowChangesAtStartupConfigEntry,
-                defaultShowChangesAtStartup,
-                new ConfigDescription("If this option is set, the changes made by this mod are displayed in the BepinEx log.",
+                PluginData.ConfigCategoryPlugin,
+                PluginData.ConfigEntryShowChangesAtStartup,
+                PluginData.ConfigEntryShowChangesAtStartupDefaultState,
+                new ConfigDescription(PluginData.ConfigEntryShowChangesAtStartupDescription,
                     null,
                     new ConfigurationManagerAttributes
                     {
-                        DefaultValue = defaultShowChangesAtStartup,
-                        Order = 0
+                        DefaultValue = PluginData.ConfigEntryShowChangesAtStartupDefaultState,
+                        Order = 2
                     }
                 )
             );
 
             configBrowseAllPieceTables = Config.Bind(
-                nameOfPluginCategory,
-                nameOfBrowseAllPieceTablesConfigEntry,
-                defaultBrowseAllPieceTables,
-                new ConfigDescription("Browse all known piece tables for portal pieces.",
+                ConfigCategoryPortal,
+                ConfigEntryBrowseAllPieceTables,
+                ConfigEntryBrowseAllPieceTablesDefaultState,
+                new ConfigDescription(ConfigEntryBrowseAllPieceTablesDescription,
                     null,
                     new ConfigurationManagerAttributes
                     {
-                        DefaultValue = defaultBrowseAllPieceTables,
-                        Order = 1
+                        DefaultValue = ConfigEntryBrowseAllPieceTablesDefaultState,
+                        Order = 3
                     }
                 )
             );
 
             configAllowPortals = Config.Bind(
-                nameOfPluginCategory,
-                nameOfAllowPortalsConfigEntry,
-                AllowPortalOptions.None,
+                ConfigCategoryPortal,
+                ConfigEntryAllowPortals,
+                ConfigEntryAllowPortalsDefaultState,
                 new ConfigDescription(
-                    "Allow 'None', only 'Vanilla', only 'Custom' or 'All' portals.",
+                    ConfigEntryAllowPortalsDescription,
                     null,
                     new ConfigurationManagerAttributes
                     {
-                        DefaultValue = AllowPortalOptions.None,
-                        Order = 2
+                        DefaultValue = ConfigEntryAllowPortalsDefaultState,
+                        Order = 4
                     }
                 )
             );
 
             /* temporary disabled
             configSetNoportalsGlobalKey = Config.Bind(
-                nameOfPluginCategory,
-                nameOfSetNoportalsGlobalKeyConfigEntry,
-                defaultSetNoportalsGlobalKey,
-                new ConfigDescription("If AllowPortals is set to 'None', the global key 'noportals' is set.",
+                ConfigCategoryPortal,
+                ConfigEntrySetNoportalsGlobalKey,
+                ConfigEntrySetNoportalsGlobalKeyDefaultState,
+                new ConfigDescription(
+                    ConfigEntrySetNoportalsGlobalKeyDescription,
                     null,
                     new ConfigurationManagerAttributes
                     {
-                        DefaultValue = defaultSetNoportalsGlobalKey,
-                        Order = 3
+                        DefaultValue = ConfigEntrySetNoportalsGlobalKeyDefaultState,
+                        Order = 5
                     }
                 )
             );
 
             configForceNoportalsGlobalKey = Config.Bind(
-                nameOfPluginCategory,
-                nameOfForceNoportalsGlobalKeyConfigEntry,
-                defaultForceNoportalsGlobalKey,
-                new ConfigDescription("Force the global key 'noportals' every time.",
+                ConfigCategoryPortal,
+                ConfigEntryForceNoportalsGlobalKey,
+                ConfigEntryForceNoportalsGlobalKeyDefaultState,
+                new ConfigDescription(
+                    ConfigEntryForceNoportalsGlobalKeyDescription,
                     null,
                     new ConfigurationManagerAttributes
                     {
-                        DefaultValue = defaultForceNoportalsGlobalKey,
-                        Order = 4
+                        DefaultValue = ConfigEntryForceNoportalsGlobalKeyDefaultState,
+                        Order = 6
                     }
                 )
             );
@@ -280,7 +277,7 @@ namespace NoPortal
 
             if (showSubInfo == true) { Logger.LogInfo("ReadConfigValues"); }
 
-            bool pluginEnabled = (bool)Config[nameOfGeneralCategory, nameOfPluginEnabledConfigEntry].BoxedValue;
+            bool pluginEnabled = (bool)Config[PluginData.ConfigCategoryGeneral, PluginData.ConfigEntryEnabled].BoxedValue;
             if (showDebugInfo == true) { Logger.LogInfo("pluginEnabled " + pluginEnabled); }
 
             if (pluginEnabled == true)
@@ -300,7 +297,7 @@ namespace NoPortal
             if (showSubInfo == true) { Logger.LogInfo("browsePieceTables"); }
 
             // get config vars
-            bool browseAllPieceTables = (bool)Config[nameOfPluginCategory, nameOfBrowseAllPieceTablesConfigEntry].BoxedValue;
+            bool browseAllPieceTables = (bool)Config[ConfigCategoryPortal, ConfigEntryBrowseAllPieceTables].BoxedValue;
             if (showDebugInfo == true) { Logger.LogInfo("browseAllPieceTables " + browseAllPieceTables); }
 
             // check piece tables
@@ -335,11 +332,11 @@ namespace NoPortal
 
             /* temporary disabled
             // get forceNoPortalsGlobalKey
-            bool forceNoPortalsGlobalKey = (bool)Config[nameOfPluginCategory, nameOfForceNoportalsGlobalKeyConfigEntry].BoxedValue;
+            bool forceNoPortalsGlobalKey = (bool)Config[PluginData.ConfigCategoryPlugin, nameOfForceNoportalsGlobalKeyConfigEntry].BoxedValue;
             if (showDebugInfo == true) { Logger.LogInfo("forceNoPortalsGlobalKey " + forceNoPortalsGlobalKey); }
 
             // get AllowPortalOptions
-            AllowPortalOptions allowPortals = (AllowPortalOptions)Config[nameOfPluginCategory, nameOfAllowPortalsConfigEntry].BoxedValue;
+            AllowPortalOptions allowPortals = (AllowPortalOptions)Config[PluginData.ConfigCategoryPlugin, nameOfAllowPortalsConfigEntry].BoxedValue;
             if (showDebugInfo == true) { Logger.LogInfo("allowPortals " + allowPortals); }
 
             if (forceNoPortalsGlobalKey == true)
@@ -386,10 +383,10 @@ namespace NoPortal
             if (showSubInfo == true) { Logger.LogInfo("CheckPieceTableForPortalPieces"); }
 
             // get AllowPortalOptions
-            AllowPortalOptions allowPortals = (AllowPortalOptions)Config[nameOfPluginCategory, nameOfAllowPortalsConfigEntry].BoxedValue;
+            AllowPortalOptions allowPortals = (AllowPortalOptions)Config[ConfigCategoryPortal, ConfigEntryAllowPortals].BoxedValue;
             if (showDebugInfo == true) { Logger.LogInfo("allowPortals " + allowPortals); }
 
-            bool showChangesAtStartup = (bool)Config[nameOfPluginCategory, nameOfShowChangesAtStartupConfigEntry].BoxedValue;
+            bool showChangesAtStartup = (bool)Config[PluginData.ConfigCategoryPlugin, PluginData.ConfigEntryShowChangesAtStartup].BoxedValue;
             if (showDebugInfo == true) { Logger.LogInfo("showChangesAtStartup " + showChangesAtStartup); }
 
             switch (allowPortals)
@@ -555,7 +552,7 @@ namespace NoPortal
 
             if (showSubInfo == true) { Logger.LogInfo("RemovePieceFromPieceTable"); }
 
-            bool showChangesAtStartup = (bool)Config[nameOfPluginCategory, nameOfShowChangesAtStartupConfigEntry].BoxedValue;
+            bool showChangesAtStartup = (bool)Config[PluginData.ConfigCategoryPlugin, PluginData.ConfigEntryShowChangesAtStartup].BoxedValue;
             if (showDebugInfo == true) { Logger.LogInfo("showChangesAtStartup " + showChangesAtStartup); }
 
             // get handle for portal prefab
@@ -591,7 +588,7 @@ namespace NoPortal
 
             if (showSubInfo == true) { Logger.LogInfo("setGlobalKey"); }
 
-            bool showChangesAtStartup = (bool)Config[nameOfPluginCategory, nameOfShowChangesAtStartupConfigEntry].BoxedValue;
+            bool showChangesAtStartup = (bool)Config[PluginData.ConfigCategoryPlugin, PluginData.ConfigEntryShowChangesAtStartup].BoxedValue;
             if (showDebugInfo == true) { Logger.LogInfo("showChangesAtStartup " + showChangesAtStartup); }
 
             ZoneSystem.instance.SetGlobalKey("noportals");
@@ -618,7 +615,7 @@ namespace NoPortal
 
             if (showSubInfo == true) { Logger.LogInfo("removeGlobalKey"); }
 
-            bool showChangesAtStartup = (bool)Config[nameOfPluginCategory, nameOfShowChangesAtStartupConfigEntry].BoxedValue;
+            bool showChangesAtStartup = (bool)Config[PluginData.ConfigCategoryPlugin, PluginData.ConfigEntryShowChangesAtStartup].BoxedValue;
             if (showDebugInfo == true) { Logger.LogInfo("showChangesAtStartup " + showChangesAtStartup); }
 
             ZoneSystem.instance.RemoveGlobalKey("noportals");

@@ -1,0 +1,10 @@
+{
+    "name": "NoPortal",
+    "version_number": "0.0.17",
+    "website_url": "https://github.com/NitrinaxValheim/NoPortal",
+    "description": "Removes portals from the piece tables. Admins can still spawn them.",
+    "dependencies": [        
+        "denikson-BepInExPack_Valheim-5.4.1900",
+        "ValheimModding-Jotunn-2.6.7"
+    ]
+}
