@@ -103,6 +103,9 @@ If you found more mods that are incompatible, feel free to report them as issue 
 
 # Changelog
 
+* Version 0.0.1.8
+    * added bool isModded
+
 * Version 0.0.1.7
     * ported code to new template format
     * moved config options BrowseAllPieceTables and AllowPortals to Portal category

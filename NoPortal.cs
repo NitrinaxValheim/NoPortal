@@ -36,6 +36,10 @@ namespace NoPortal
     internal class NoPortal : BaseUnityPlugin
     {
 
+        // public values
+
+        public static bool isModded = true;
+
         // private values
 
         // plugin
