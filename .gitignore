@@ -402,3 +402,11 @@ FodyWeavers.xsd
 *.Config
 *.csproj
 *.props
+
+# custom
+Dist/*
+*.txt
+*.bat
+*.Config
+*.csproj
+*.props
