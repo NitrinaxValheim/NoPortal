@@ -1,5 +1,15 @@
 # Changelog
 
+Version 0.0.1.9
+
+    * updated for Valheim 0.209.8 (Unity 2020.3.33f1)
+    * updated for BepInEX 5.4.1901
+    * updated for Jotunn 2.6.10
+    * renamed class PluginDependencies to Dependencies and moved it into folder Plugin
+    * renamed class PluginSettings to Data and moved it into folder Plugin
+    * removed unused code parts
+    * updated publish.bat
+
 * Version 0.0.1.8
     * added bool isModded
     * split README in single documents for README, INSTALLATION and CHANGELOG

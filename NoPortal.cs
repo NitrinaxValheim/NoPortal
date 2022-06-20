@@ -16,13 +16,16 @@ using Jotunn.Utils;
 using Logger = Jotunn.Logger;
 
 // Settings
-using PluginSettings;
+
+using Plugin;
+
+using Common;
 
 namespace NoPortal
 {
 
     // setup plugin data
-    [BepInPlugin(PluginData.Guid, PluginData.ModName, PluginData.Version)]
+    [BepInPlugin(Data.Guid, Data.ModName, Data.Version)]
 
     // check for running valheim process
     [BepInProcess("valheim.exe")]
@@ -42,25 +45,8 @@ namespace NoPortal
 
         // private values
 
-        // plugin
-        private const Boolean showPluginInfo = true;
-        private const Boolean showPluginDetailedInfo = false;
-        private const Boolean showPluginErrorInfo = true;
-
-        // event
-        private const Boolean showEventInfo = false;
-        private const Boolean showEventDetailedInfo = false;
-        private const Boolean showEventErrorInfo = true;
-
-        // sub
-        private const Boolean showSubInfo = false;
-        private const Boolean showSubDetailedInfo = false;
-        private const Boolean showSubErrorInfo = true;
-
-        // debug
-        private const Boolean showDebugInfo = false;
-
         // config values
+
         // enum for AllowPortals
         [Flags]
         private enum AllowPortalOptions
@@ -82,16 +68,6 @@ namespace NoPortal
         private const AllowPortalOptions ConfigEntryAllowPortalsDefaultState = AllowPortalOptions.None;
         private const string ConfigEntryAllowPortalsDescription = "Allow 'None', only 'Vanilla', only 'Custom' or 'All' portals.";
 
-        /* temporary disabled
-        private const string ConfigEntrySetNoportalsGlobalKey = "SetGlobalKey";
-        private const bool ConfigEntrySetNoportalsGlobalKeyDefaultState = true;
-        private const string ConfigEntrySetNoportalsGlobalKeyDescription = "If AllowPortals is set to 'None', the global key 'noportals' is set.";
-
-        private const string ConfigEntryForceNoportalsGlobalKey = "ForceGlobalKey";
-        private const bool ConfigEntryForceNoportalsGlobalKeyDefaultState = false;
-        private const string ConfigEntryForceNoportalsGlobalKeyDescription = "Force the global key 'noportals' every time.";
-        */
-
         // config values
         private ConfigEntry<bool> configModEnabled;
         private ConfigEntry<int> configNexusID;
@@ -99,43 +75,63 @@ namespace NoPortal
         private ConfigEntry<bool> configBrowseAllPieceTables;
         private ConfigEntry<AllowPortalOptions> configAllowPortals;
 
-        /* temporary disabled
-        private ConfigEntry<bool> configSetNoportalsGlobalKey;
-        private ConfigEntry<bool> configForceNoportalsGlobalKey;
-        */
-
         #region[Awake]
         private void Awake()
         {
 
-            CreateConfigValues();
-
-            // check if incompatible mods installed
-            if (CheckForOtherPortalMods() == false)
+            if (DependencyOperations.CheckForDependencyErrors(PluginInfo.PLUGIN_GUID) == false)
             {
 
-                // ##### plugin startup logic #####
+                CreateConfigValues();
 
-                if (showPluginDetailedInfo == true) { Jotunn.Logger.LogInfo("Loading start"); }
+                bool modEnabled = (bool)Config[Data.ConfigCategoryGeneral, Data.ConfigEntryEnabled].BoxedValue;
 
-                // ItemManager
-                ItemManager.OnItemsRegistered += OnItemsRegistered;
+                if (modEnabled == true)
+                {
 
-                // PieceManager
-                PieceManager.OnPiecesRegistered += OnPiecesRegistered;
+                    // check if incompatible mods installed
+                    if (CheckForOtherPortalMods() == false)
+                    {
+                        // ##### plugin startup logic #####
+#if (DEBUG)
+                        Logger.LogInfo("Loading start");
+#endif
 
-                if (showPluginDetailedInfo == true) { Jotunn.Logger.LogInfo("Loading done"); }
+                        // ItemManager
+                        ItemManager.OnItemsRegistered += OnItemsRegistered;
 
-                // ##### info functions #####
+                        // ##### info functions #####
 
-                // Game data
-                if (showPluginInfo == true) { Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is active."); }
+#if (DEBUG)
+                        Logger.LogInfo("Loading done");
+#endif
 
+                        // Game data
+#if (DEBUG)
+                        Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is active.");
+#endif
+
+                    }
+                    else
+                    {
+
+                        Logger.LogWarning($"Other portal mod found. {PluginInfo.PLUGIN_GUID} is inactive.");
+
+                    }
+
+
+                }
+                else
+                {
+
+                    Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is disabled by config.");
+
+                }
             }
             else
             {
 
-                if (showPluginErrorInfo == true) { Logger.LogWarning($"Other portal mod found. {PluginInfo.PLUGIN_GUID} is inactive."); }
+                Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is disabled because needed dependencies are missing.");
 
             }
 
@@ -146,16 +142,18 @@ namespace NoPortal
         private void CreateConfigValues()
         {
 
-            if (showSubInfo == true) { Logger.LogInfo("CreateConfigValues"); }
+#if (DEBUG)
+            Logger.LogInfo("CreateConfigValues");
+#endif
 
             Config.SaveOnConfigSet = true;
 
             // Add client config which can be edited in every local instance independently
             configModEnabled = Config.Bind(
-                PluginData.ConfigCategoryGeneral,
-                PluginData.ConfigEntryEnabled,
-                PluginData.ConfigEntryEnabledDefaultState,
-                new ConfigDescription(PluginData.ConfigEntryEnabledDescription,
+                Data.ConfigCategoryGeneral,
+                Data.ConfigEntryEnabled,
+                Data.ConfigEntryEnabledDefaultState,
+                new ConfigDescription(Data.ConfigEntryEnabledDescription,
                     null,
                     new ConfigurationManagerAttributes
                     {
@@ -164,10 +162,10 @@ namespace NoPortal
             );
 
             configNexusID = Config.Bind(
-                PluginData.ConfigCategoryGeneral,
-                PluginData.ConfigEntryNexusID,
-                PluginData.ConfigEntryNexusIDID,
-                new ConfigDescription(PluginData.ConfigEntryNexusIDDescription,
+                Data.ConfigCategoryGeneral,
+                Data.ConfigEntryNexusID,
+                Data.ConfigEntryNexusIDID,
+                new ConfigDescription(Data.ConfigEntryNexusIDDescription,
                     null,
                     new ConfigurationManagerAttributes
                     {
@@ -179,14 +177,14 @@ namespace NoPortal
             );
 
             configShowChangesAtStartup = Config.Bind(
-                PluginData.ConfigCategoryPlugin,
-                PluginData.ConfigEntryShowChangesAtStartup,
-                PluginData.ConfigEntryShowChangesAtStartupDefaultState,
-                new ConfigDescription(PluginData.ConfigEntryShowChangesAtStartupDescription,
+                Data.ConfigCategoryPlugin,
+                Data.ConfigEntryShowChangesAtStartup,
+                Data.ConfigEntryShowChangesAtStartupDefaultState,
+                new ConfigDescription(Data.ConfigEntryShowChangesAtStartupDescription,
                     null,
                     new ConfigurationManagerAttributes
                     {
-                        DefaultValue = PluginData.ConfigEntryShowChangesAtStartupDefaultState,
+                        DefaultValue = Data.ConfigEntryShowChangesAtStartupDefaultState,
                         Order = 2
                     }
                 )
@@ -221,38 +219,6 @@ namespace NoPortal
                 )
             );
 
-            /* temporary disabled
-            configSetNoportalsGlobalKey = Config.Bind(
-                ConfigCategoryPortal,
-                ConfigEntrySetNoportalsGlobalKey,
-                ConfigEntrySetNoportalsGlobalKeyDefaultState,
-                new ConfigDescription(
-                    ConfigEntrySetNoportalsGlobalKeyDescription,
-                    null,
-                    new ConfigurationManagerAttributes
-                    {
-                        DefaultValue = ConfigEntrySetNoportalsGlobalKeyDefaultState,
-                        Order = 5
-                    }
-                )
-            );
-
-            configForceNoportalsGlobalKey = Config.Bind(
-                ConfigCategoryPortal,
-                ConfigEntryForceNoportalsGlobalKey,
-                ConfigEntryForceNoportalsGlobalKeyDefaultState,
-                new ConfigDescription(
-                    ConfigEntryForceNoportalsGlobalKeyDescription,
-                    null,
-                    new ConfigurationManagerAttributes
-                    {
-                        DefaultValue = ConfigEntryForceNoportalsGlobalKeyDefaultState,
-                        Order = 6
-                    }
-                )
-            );
-            */
-
             // You can subscribe to a global event when config got synced initially and on changes
             SynchronizationManager.OnConfigurationSynchronized += (obj, attr) =>
             {
@@ -279,10 +245,15 @@ namespace NoPortal
         private void ReadConfigValues()
         {
 
-            if (showSubInfo == true) { Logger.LogInfo("ReadConfigValues"); }
+#if (DEBUG)
+            Logger.LogInfo("ReadConfigValues");
+#endif
 
-            bool pluginEnabled = (bool)Config[PluginData.ConfigCategoryGeneral, PluginData.ConfigEntryEnabled].BoxedValue;
-            if (showDebugInfo == true) { Logger.LogInfo("pluginEnabled " + pluginEnabled); }
+            bool pluginEnabled = (bool)Config[Data.ConfigCategoryGeneral, Data.ConfigEntryEnabled].BoxedValue;
+
+#if (DEBUG)
+            Logger.LogInfo("pluginEnabled " + pluginEnabled);
+#endif
 
             if (pluginEnabled == true)
             {
@@ -298,11 +269,12 @@ namespace NoPortal
         private void browsePieceTables()
         {
 
-            if (showSubInfo == true) { Logger.LogInfo("browsePieceTables"); }
+#if (DEBUG)
+            Logger.LogInfo("browsePieceTables");
+#endif
 
             // get config vars
             bool browseAllPieceTables = (bool)Config[ConfigCategoryPortal, ConfigEntryBrowseAllPieceTables].BoxedValue;
-            if (showDebugInfo == true) { Logger.LogInfo("browseAllPieceTables " + browseAllPieceTables); }
 
             // check piece tables
             if (browseAllPieceTables == true)
@@ -315,7 +287,9 @@ namespace NoPortal
                 foreach (PieceTable pieceTable in pieceTables)
                 {
 
-                    if (showDebugInfo == true) { Logger.LogInfo("pieceTable " + pieceTable.name); }
+#if (DEBUG)
+                    Logger.LogInfo("pieceTable " + pieceTable.name);
+#endif
 
                     CheckPieceTableForPortalPieces(pieceTable);
 
@@ -328,54 +302,13 @@ namespace NoPortal
                 // get handle for _HammerPieceTable
                 PieceTable pieceTable = PieceManager.Instance.GetPieceTable("_HammerPieceTable");
 
-                if (showDebugInfo == true) { Logger.LogInfo("pieceTable " + pieceTable.name); }
+#if (DEBUG)
+                Logger.LogInfo("pieceTable " + pieceTable.name);
+#endif
 
                 CheckPieceTableForPortalPieces(pieceTable);
 
             }
-
-            /* temporary disabled
-            // get forceNoPortalsGlobalKey
-            bool forceNoPortalsGlobalKey = (bool)Config[PluginData.ConfigCategoryPlugin, nameOfForceNoportalsGlobalKeyConfigEntry].BoxedValue;
-            if (showDebugInfo == true) { Logger.LogInfo("forceNoPortalsGlobalKey " + forceNoPortalsGlobalKey); }
-
-            // get AllowPortalOptions
-            AllowPortalOptions allowPortals = (AllowPortalOptions)Config[PluginData.ConfigCategoryPlugin, nameOfAllowPortalsConfigEntry].BoxedValue;
-            if (showDebugInfo == true) { Logger.LogInfo("allowPortals " + allowPortals); }
-
-            if (forceNoPortalsGlobalKey == true)
-            {
-                if (GetGlobalKey() == false) { SetGlobalKey(); }
-            }
-            else
-            {
-
-                switch (allowPortals)
-                {
-
-                    case AllowPortalOptions.None:
-                        if (GetGlobalKey() == false) { SetGlobalKey(); }
-                        break;
-
-                    case AllowPortalOptions.Vanilla:
-                        if (GetGlobalKey() == true) { RemoveGlobalKey(); }
-                        break;
-
-                    case AllowPortalOptions.Custom:
-                        if (GetGlobalKey() == true) { RemoveGlobalKey(); }
-                        break;
-
-                    case AllowPortalOptions.All:
-                        if (GetGlobalKey() == true) { RemoveGlobalKey(); }
-                        break;
-
-                    default:
-                        break;
-
-                }
-
-            }
-            */
 
         }
         #endregion
@@ -384,21 +317,27 @@ namespace NoPortal
         private void CheckPieceTableForPortalPieces(PieceTable pieceTable)
         {
 
-            if (showSubInfo == true) { Logger.LogInfo("CheckPieceTableForPortalPieces"); }
+#if (DEBUG)
+            Logger.LogInfo("CheckPieceTableForPortalPieces");
+#endif
 
             // get AllowPortalOptions
             AllowPortalOptions allowPortals = (AllowPortalOptions)Config[ConfigCategoryPortal, ConfigEntryAllowPortals].BoxedValue;
-            if (showDebugInfo == true) { Logger.LogInfo("allowPortals " + allowPortals); }
 
-            bool showChangesAtStartup = (bool)Config[PluginData.ConfigCategoryPlugin, PluginData.ConfigEntryShowChangesAtStartup].BoxedValue;
-            if (showDebugInfo == true) { Logger.LogInfo("showChangesAtStartup " + showChangesAtStartup); }
+#if (DEBUG)
+            Logger.LogInfo("allowPortals " + allowPortals);
+#endif
+
+            bool showChangesAtStartup = (bool)Config[Data.ConfigCategoryPlugin, Data.ConfigEntryShowChangesAtStartup].BoxedValue;
 
             switch (allowPortals)
             {
 
                 case AllowPortalOptions.None:
 
-                    if (showDebugInfo == true) { Logger.LogInfo("'None' option selected"); }
+#if (DEBUG)
+                    Logger.LogInfo("'None' option selected");
+#endif
 
                     // remove vanilla portal piece
                     RemoveVanillaPortalPieceFromHammerPieceTable();
@@ -410,7 +349,9 @@ namespace NoPortal
 
                 case AllowPortalOptions.Vanilla:
 
-                    if (showDebugInfo == true) { Logger.LogInfo("'Vanilla' option selected"); }
+#if (DEBUG)
+                    Logger.LogInfo("'Vanilla' option selected");
+#endif
 
                     // add vanilla portal piece
                     // workaround if portal_wood is not available in hammerpiecetable as it was previously removed,
@@ -424,7 +365,9 @@ namespace NoPortal
 
                 case AllowPortalOptions.Custom:
 
-                    if (showDebugInfo == true) { Logger.LogInfo("'Custom' option selected"); }
+#if (DEBUG)
+                    Logger.LogInfo("'Custom' option selected");
+#endif
 
                     // remove vanilla portal piece, allow all custom portal pieces
                     RemoveVanillaPortalPieceFromHammerPieceTable();
@@ -433,7 +376,9 @@ namespace NoPortal
 
                 case AllowPortalOptions.All:
 
-                    if (showDebugInfo == true) { Logger.LogInfo("'All' option selected"); }
+#if (DEBUG)
+                    Logger.LogInfo("'All' option selected");
+#endif
 
                     // add vanilla portal piece
                     // workaround if portal_wood is not available in hammerpiecetable as it was previously removed,
@@ -460,7 +405,9 @@ namespace NoPortal
         private void AddVanillaPortalPieceToHammerPieceTable()
         {
 
-            if (showSubInfo == true) { Logger.LogInfo("AddVanillaPortalPieceToHammerPieceTable"); }
+#if (DEBUG)
+            Logger.LogInfo("AddVanillaPortalPieceToHammerPieceTable");
+#endif
 
             // set name of piece table
             string portalPieceTable = "_HammerPieceTable";
@@ -489,7 +436,9 @@ namespace NoPortal
         private void RemoveVanillaPortalPieceFromHammerPieceTable()
         {
 
-            if (showSubInfo == true) { Logger.LogInfo("RemoveVanillaPortalPiecesFromPieceTables"); }
+#if (DEBUG)
+            Logger.LogInfo("RemoveVanillaPortalPiecesFromPieceTables");
+#endif
 
             // set name of piece table
             string portalPieceTable = "_HammerPieceTable";
@@ -515,7 +464,9 @@ namespace NoPortal
         private void RemoveCustomPortalPiecesFromPieceTables(PieceTable pieceTable)
         {
 
-            if (showSubInfo == true) { Logger.LogInfo("RemoveCustomPortalPiecesFromPieceTables"); }
+#if (DEBUG)
+            Logger.LogInfo("RemoveCustomPortalPiecesFromPieceTables");
+#endif
 
             // get handle for portal prefab names
             string[] customPieceNames = GetCustomPortalPieceNames();
@@ -554,17 +505,21 @@ namespace NoPortal
         private void RemovePieceFromPieceTable(PieceTable pieceTable, string pieceName)
         {
 
-            if (showSubInfo == true) { Logger.LogInfo("RemovePieceFromPieceTable"); }
+#if (DEBUG)
+            Logger.LogInfo("RemovePieceFromPieceTable");
+#endif
 
-            bool showChangesAtStartup = (bool)Config[PluginData.ConfigCategoryPlugin, PluginData.ConfigEntryShowChangesAtStartup].BoxedValue;
-            if (showDebugInfo == true) { Logger.LogInfo("showChangesAtStartup " + showChangesAtStartup); }
+            bool showChangesAtStartup = (bool)Config[Data.ConfigCategoryPlugin, Data.ConfigEntryShowChangesAtStartup].BoxedValue;
 
             // get handle for portal prefab
             GameObject piecePrefab = PrefabManager.Instance.GetPrefab(pieceName);
 
             // get index of portal prefab in piece table
             int pieceIndex = pieceTable.m_pieces.IndexOf(piecePrefab);
-            if (showDebugInfo == true) { Logger.LogInfo("prefabIndex " + pieceIndex); }
+
+#if (DEBUG)
+            Logger.LogInfo("prefabIndex " + pieceIndex);
+#endif
 
             if (pieceIndex > -1)
             {
@@ -586,96 +541,6 @@ namespace NoPortal
         }
         #endregion
 
-        #region[SetGlobalKey]
-        private void SetGlobalKey(string keyName = "")
-        {
-
-            if (showSubInfo == true) { Logger.LogInfo("setGlobalKey"); }
-
-            bool showChangesAtStartup = (bool)Config[PluginData.ConfigCategoryPlugin, PluginData.ConfigEntryShowChangesAtStartup].BoxedValue;
-            if (showDebugInfo == true) { Logger.LogInfo("showChangesAtStartup " + showChangesAtStartup); }
-
-            ZoneSystem.instance.SetGlobalKey("noportals");
-            //ZoneSystem.instance.m_globalKeys.Add("noportals");
-
-            if (GetGlobalKey() == true)
-            {
-
-                if (showChangesAtStartup == true) { Logger.LogWarning("Global key 'noportals' set."); }
-
-            }
-            else
-            {
-
-                if (showChangesAtStartup == true) { Logger.LogWarning("Global key 'noportals' cant set."); }
-            }
-
-        }
-        #endregion
-
-        #region[RemoveGlobalKey]
-        private void RemoveGlobalKey(string keyName = "")
-        {
-
-            if (showSubInfo == true) { Logger.LogInfo("removeGlobalKey"); }
-
-            bool showChangesAtStartup = (bool)Config[PluginData.ConfigCategoryPlugin, PluginData.ConfigEntryShowChangesAtStartup].BoxedValue;
-            if (showDebugInfo == true) { Logger.LogInfo("showChangesAtStartup " + showChangesAtStartup); }
-
-            ZoneSystem.instance.RemoveGlobalKey("noportals");
-            //ZoneSystem.instance.m_globalKeys.Remove("noportals");
-
-            if (GetGlobalKey() == false)
-            {
-
-                if (showChangesAtStartup == true) { Logger.LogWarning("Global key 'noportals' removed."); }
-
-            }
-            else
-            {
-
-                if (showChangesAtStartup == true) { Logger.LogWarning("Global key 'noportals' cant removed."); }
-            }
-
-
-        }
-        #endregion
-
-        #region[GetGlobalKey]
-        private bool GetGlobalKey(string keyName = "")
-        {
-
-            bool globalKey = ZoneSystem.instance.GetGlobalKey("noportals");
-
-            return globalKey;
-
-        }
-        #endregion
-
-        private void debugGlobalKeys()
-        {
-
-            bool globalKey = ZoneSystem.instance.GetGlobalKey("noportals");
-            Logger.LogInfo("ZoneSystem.instance.GetGlobalKey " + globalKey);
-
-            List<string> globalKeyList = ZoneSystem.instance.GetGlobalKeys();
-
-            foreach (string globalKeyEntry in globalKeyList)
-            {
-                Logger.LogInfo(globalKeyEntry);
-            }
-
-            bool globalKeyA = ZoneSystem.instance.m_globalKeys.Contains("noportals");
-            Logger.LogInfo("ZoneSystem.instance.m_globalKeys.Contains " + globalKeyA);
-
-            HashSet<string> globalKeyListA = ZoneSystem.instance.m_globalKeys;
-
-            foreach (string globalKeyEntry in globalKeyListA)
-            {
-                Logger.LogInfo(globalKeyEntry);
-            }
-
-        }
         #region[EventSystem]
 
         // ItemManager
@@ -686,63 +551,20 @@ namespace NoPortal
             try
             {
 
-                if (showEventInfo == true) { Logger.LogInfo("OnItemsRegistered"); }
+#if (DEBUG)
+                Logger.LogInfo("OnItemsRegistered");
+#endif
 
                 ReadConfigValues();
-
-                /* temporary disabled
-                debugGlobalKeys();
-
-                // debug 'noportals' global key
-                if (GetGlobalKey() == true)
-                {
-
-                    Logger.LogInfo("noportals set");
-
-                }
-                else
-                {
-
-                    Logger.LogInfo("noportals not set");
-
-                }
-                */
 
             }
             catch (Exception ex)
             {
-                if (showEventErrorInfo == true) { Logger.LogError($"Error OnItemsRegistered : {ex.Message}"); }
+                Logger.LogError($"Error OnItemsRegistered : {ex.Message}");
             }
             finally
             {
                 PrefabManager.OnPrefabsRegistered -= OnItemsRegistered;
-            }
-
-        }
-        #endregion
-
-        // PieceManager
-        #region[OnPiecesRegistered]
-        private void OnPiecesRegistered()
-        {
-
-            try
-            {
-
-                if (showEventInfo == true) { Logger.LogInfo("OnPiecesRegistered"); }
-
-            }
-            catch (Exception ex)
-            {
-
-                if (showEventErrorInfo == true) { Logger.LogError($"Error OnPiecesRegistered : {ex.Message}"); }
-
-            }
-            finally
-            {
-
-                PieceManager.OnPiecesRegistered -= OnPiecesRegistered;
-
             }
 
         }
@@ -755,7 +577,9 @@ namespace NoPortal
         private Boolean CheckForOtherPortalMods()
         {
 
-            if (showSubInfo == true) { Logger.LogInfo("CheckForOtherPortalMods"); }
+#if (DEBUG)
+            Logger.LogInfo("CheckForOtherPortalMods");
+#endif
 
             string[] outdatedModList = GetOutdatedModList();
 
@@ -803,7 +627,9 @@ namespace NoPortal
         private Boolean LookForModInPluginDir(string modName)
         {
 
-            if (showSubInfo == true) { Logger.LogInfo("LookForModInPluginDir"); }
+#if (DEBUG)
+            Logger.LogInfo("LookForModInPluginDir");
+#endif
 
             string[] modFound = Directory.GetFiles(@BepInEx.Paths.PluginPath, modName, SearchOption.AllDirectories);
 
@@ -825,7 +651,9 @@ namespace NoPortal
         private string[] GetCustomPortalPieceNames()
         {
 
-            if (showSubInfo == true) { Logger.LogInfo("GetCustomPortalPieceNames"); }
+#if (DEBUG)
+            Logger.LogInfo("GetCustomPortalPieceNames");
+#endif
 
             string[] portalPieceNames =
             {
@@ -844,7 +672,9 @@ namespace NoPortal
         private string[] GetIncompatibleModList()
         {
 
-            if (showSubInfo == true) { Logger.LogInfo("GetIncompatibleModList"); }
+#if (DEBUG)
+            Logger.LogInfo("GetIncompatibleModList");
+#endif
 
             string[] incompatibleModList =
             {
@@ -864,7 +694,9 @@ namespace NoPortal
         private string[] GetOutdatedModList()
         {
 
-            if (showSubInfo == true) { Logger.LogInfo("GetOutdatedModList"); }
+#if (DEBUG)
+            Logger.LogInfo("GetOutdatedModList");
+#endif
 
             string[] outdatedModList =
             {
