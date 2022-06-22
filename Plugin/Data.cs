@@ -24,12 +24,12 @@
         /// <summary>
         ///     The current version of the mod.
         /// </summary>
-        public const string Version = "0.0.20";
+        public const string Version = "0.0.21";
 
         /// <summary>
         ///     The BepInEx plugin Mod GUID being used.
         /// </summary>
-        public const string ModGuid = Company + "." + Namespace + "." + ModName;
+        public const string ModGuid = Company + "." + ModName;
 
         /// <summary>
         ///     The description of the mod.

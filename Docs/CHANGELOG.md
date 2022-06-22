@@ -1,5 +1,8 @@
 # Changelog
 
+Version 0.0.21
+    * revert changes of ModGuid and changed it from Company.Namespace.ModName to Company.ModName because otherwise the name of the config file becomes too long
+
 Version 0.0.20
     * changed Guid to ModGuid
     * added ModName to ModGuid
