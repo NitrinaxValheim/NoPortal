@@ -25,7 +25,7 @@ namespace NoPortal
 {
 
     // setup plugin data
-    [BepInPlugin(Data.Guid, Data.ModName, Data.Version)]
+    [BepInPlugin(Data.ModGuid, Data.ModName, Data.Version)]
 
     // check for running valheim process
     [BepInProcess("valheim.exe")]
@@ -34,13 +34,12 @@ namespace NoPortal
     [BepInDependency(Jotunn.Main.ModGuid, BepInDependency.DependencyFlags.HardDependency)]
 
     // check compatibility level
-    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Patch)]
+    [NetworkCompatibility(CompatibilityLevel.ClientMustHaveMod, VersionStrictness.Patch)]
 
     internal class NoPortal : BaseUnityPlugin
     {
 
         // public values
-
         public static bool isModded = true;
 
         // private values

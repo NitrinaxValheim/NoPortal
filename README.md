@@ -25,3 +25,5 @@ See list of compatible mods in [COMPATIBLEWITH](https://github.com/NitrinaxValhe
 See list of incompatible mods in [INCOMPATIBLEWITH](https://github.com/NitrinaxValheim/NoPortal/blob/main/Docs/INCOMPATIBLEWITH.md) list.
 
 Please report bugs on the [ISSUES](https://github.com/NitrinaxValheim/NoPortal/issues) Page.
+
+You can also report bugs at the NitrinaxValheimModSupport [Discord Server](https://discord.gg/bxhvWgsnUU).
