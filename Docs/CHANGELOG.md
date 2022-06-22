@@ -1,13 +1,13 @@
 # Changelog
 
 Version 0.0.21
-   * revert changes of ModGuid and changed it from Company.Namespace.ModName to Company.ModName because otherwise the name of the config file becomes too long
+    * revert changes of ModGuid and changed it from Company.Namespace.ModName to Company.ModName because otherwise the name of the config file becomes too long
 
 Version 0.0.20
-   * changed Guid to ModGuid
-   * added ModName to ModGuid
-   * changed CompatibilityLevel from EveryoneMustHaveMod to ClientMustHaveMod
-   * adjusted Version string from pattern 0.0.0.0 to 0.0.0
+    * changed Guid to ModGuid
+    * added ModName to ModGuid
+    * changed CompatibilityLevel from EveryoneMustHaveMod to ClientMustHaveMod
+    * adjusted Version string from pattern 0.0.0.0 to 0.0.0
 
 Version 0.0.1.9
     * updated for Valheim 0.209.8 (Unity 2020.3.33f1)
