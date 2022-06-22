@@ -27,7 +27,7 @@ Version 0.0.1.9
   * moved config options BrowseAllPieceTables and AllowPortals to Portal category
 
 * Version 0.0.1.6
-    * Temporary disabling of the possibility to set the 'noportals' global key, because I haven't found a reliable method for it yet. It sometimes just doesn't work or reports that the key has been set although it is not present in the global key list ingame.
+  * Temporary disabling of the possibility to set the 'noportals' global key, because I haven't found a reliable method for it yet. It sometimes just doesn't work or reports that the key has been set although it is not present in the global key list ingame.
 
 * Version 0.0.1.5
   * added config for
