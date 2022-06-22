@@ -34,7 +34,7 @@
         /// <summary>
         ///     The description of the mod.
         /// </summary>
-        public const string Description = "Remove portal from _HammerPieceTable. Admins can still spawn it. Set noportals global key.";
+        public const string Description = "Remove portal from _HammerPieceTable. Admins can still spawn it.";
 
         /// <summary>
         ///     Set the deploy channel.
