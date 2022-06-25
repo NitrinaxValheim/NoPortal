@@ -1,5 +1,10 @@
 # Changelog
 
+* Version 0.0.22
+    * reworked configuration to adapt to Jotunn 2.7.0 changes and to use BepInExConfigurationManager
+    (please delete your current Nitrinax.CustomizedBronze.cfg to create a new config with the current strings)
+    * The description text for BrowseAllPieceTables and AllowPortals has been extended to better describe the options.
+
 Version 0.0.21
   * revert changes of ModGuid and changed it from Company.Namespace.ModName to Company.ModName because otherwise the name of the config file becomes too long
 

@@ -20,6 +20,7 @@ using Logger = Jotunn.Logger;
 using Plugin;
 
 using Common;
+using System.ComponentModel;
 
 namespace NoPortal
 {
@@ -44,35 +45,53 @@ namespace NoPortal
 
         // private values
 
+        // new line
+        private readonly static string s_CRLF = Environment.NewLine;
+        private readonly static string s_CRLF2 = Environment.NewLine + Environment.NewLine;
+
         // config values
 
         // enum for AllowPortals
-        [Flags]
-        private enum AllowPortalOptions
+        public enum AllowPortalOptions
         {
-            None = 0,
-            Vanilla = 1,
-            Custom = 2,
-            All = 4
+
+            [Description("None")]
+            None = 1,
+
+            [Description("Vanilla")]
+            Vanilla = 2,
+
+            [Description("Custom")]
+            Custom = 4,
+
+            [Description("All")]
+            All = 8
+
         };
 
         //portal category
-        private const string ConfigCategoryPortal = "Portal";
+        private static string ConfigCategoryPortal = "Portal";
 
-        private const string ConfigEntryBrowseAllPieceTables = "BrowseAllPieceTables";
-        private const bool ConfigEntryBrowseAllPieceTablesDefaultState = true;
-        private const string ConfigEntryBrowseAllPieceTablesDescription = "Browse all known piece tables for portal pieces.";
+        private static string ConfigEntryBrowseAllPieceTables = "BrowseAllPieceTables";
+        private static bool ConfigEntryBrowseAllPieceTablesDefaultState = true;
+        private static string ConfigEntryBrowseAllPieceTablesDescription = //"Browse all known piece tables for portal pieces.";
+            "If you enable this, all known piece tables will be searched for portals." + s_CRLF2 +
+            "If you disable this, only the _HammerPieceTable will be searched for portals." + s_CRLF;
 
-        private const string ConfigEntryAllowPortals = "AllowPortals";
-        private const AllowPortalOptions ConfigEntryAllowPortalsDefaultState = AllowPortalOptions.None;
-        private const string ConfigEntryAllowPortalsDescription = "Allow 'None', only 'Vanilla', only 'Custom' or 'All' portals.";
+        private static string ConfigEntryAllowPortals = "AllowPortals";
+        private static AllowPortalOptions ConfigEntryAllowPortalsDefaultState = AllowPortalOptions.None;
+        private static string ConfigEntryAllowPortalsDescription =
+            "If you select 'None', all portals types (vanilla and custom) will be removed from piece tables depending on BrowseAllPieceTables." + s_CRLF2 +
+            "If you select 'Vanilla', only the vanilla portal is allowed. All other will be removed from piece tables depending on BrowseAllPieceTables." + s_CRLF2 +
+            "If you select 'Custom', only custom portals are allowed. The vanilla portal will be removed from piece tables depending on BrowseAllPieceTables." + s_CRLF2 +
+            "If you select 'All', all portal types are allowed." + s_CRLF;
 
         // config values
-        private ConfigEntry<bool> configModEnabled;
-        private ConfigEntry<int> configNexusID;
-        private ConfigEntry<bool> configShowChangesAtStartup;
-        private ConfigEntry<bool> configBrowseAllPieceTables;
-        private ConfigEntry<AllowPortalOptions> configAllowPortals;
+        public static ConfigEntry<bool> configModEnabled;
+        public static ConfigEntry<int> configNexusID;
+        public static ConfigEntry<bool> configShowChangesAtStartup;
+        public static ConfigEntry<bool> configBrowseAllPieceTables;
+        public static ConfigEntry<AllowPortalOptions> configAllowPortals;
 
         #region[Awake]
         private void Awake()
@@ -157,7 +176,8 @@ namespace NoPortal
                     new ConfigurationManagerAttributes
                     {
                         Order = 0,
-                    })
+                    }
+                )
             );
 
             configNexusID = Config.Bind(
