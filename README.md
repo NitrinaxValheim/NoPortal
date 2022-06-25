@@ -6,7 +6,7 @@
 ## Requirements
 
 - BepInEx version 5.4.19.00 or higher [thunderstore](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/)
-- Jotunn version 2.6.10 or higher [thunderstore](https://valheim.thunderstore.io/package/ValheimModding/Jotunn/), [nexusmods](https://www.nexusmods.com/valheim/mods/1138)
+- Jotunn version 2.7.0 or higher [thunderstore](https://valheim.thunderstore.io/package/ValheimModding/Jotunn/), [nexusmods](https://www.nexusmods.com/valheim/mods/1138)
 - Valheim version 0.209.8 or higher [Steam](https://store.steampowered.com/app/892970/Valheim/)
 - [.NET Framework 4.72](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net472)
 
