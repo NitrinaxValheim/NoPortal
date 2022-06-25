@@ -5,6 +5,6 @@
     "description": "Removes portals from the piece tables. Admins can still spawn them.",
     "dependencies": [        
         "denikson-BepInExPack_Valheim-5.4.1901",
-        "ValheimModding-Jotunn-2.6.10"
+        "ValheimModding-Jotunn-2.7.0"
     ]
 }
