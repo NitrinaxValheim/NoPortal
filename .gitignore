@@ -397,12 +397,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-*.txt
-*.bat
-*.Config
-*.csproj
-*.props
-
 # custom
 Dist/*
 *.txt
