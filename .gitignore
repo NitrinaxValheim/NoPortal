@@ -406,7 +406,3 @@ FodyWeavers.xsd
 # custom
 Dist/*
 *.txt
-*.bat
-*.Config
-*.csproj
-*.props
